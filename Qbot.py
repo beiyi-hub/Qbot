@@ -221,6 +221,85 @@ def get_memory(file_path, keywords, match_n=200, time_n=200, radius=50):
 
     return main_text[:match_n+time_n+200]
 
+def recognize_image(img_base):
+    global img_num
+    recognize_model="glm-4V-Plus"                #推荐使用智谱的图像识别大模型，稳定可靠
+    client = ZhipuAI(api_key="%s" % user_key)
+  # 填写您自己的APIKey
+    try:
+        url = "https://apicn.furina.chat/v1/chat/completions"
+        payload = {                                        #备选其他图像识别大模型
+            "model": "claude-3-5-sonnet-20240620",
+            "messages": [
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": img_base
+                    }
+                },
+                {
+                    "role": "user",
+                    "content": "分析一下这张图片中的人物表达了什么情感或在做什么有什么意图，如果图片中有文字请结合文字做出分析，只用给出你的总结即可"
+                }
+            ],
+            "stream": False,
+        }
+        headers = {
+            "Authorization": "Bearer api—key",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.request("POST", url, json=payload, headers=headers)
+        content = json.loads("%s" % response.text)
+        image_res = "%s" % content['choices'][0]['message']['content']
+        print(response.text)
+    except:
+        pass
+          # 填写您自己的APIKey
+        response = client.chat.completions.create(
+            model="%s"%recognize_model,  # 填写需要调用的模型名称
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": img_base
+                            }
+                        },
+                        {
+                            "type": "text",
+                            "text": "分析一下这张图片中的人物表达了什么情感或意图，如果图片中有文字请结合文字做出分析，只用给出你的总结即可"
+                        }
+                    ]
+                }
+            ]
+        )
+        image_res = "%s" % response.choices[0].message.content
+    if "解析" in rev['raw_message']:                                    #如果你需要对图片内容进行具体的解析，请在句子中加上解析二字
+        send_msg({'msg_type': 'group', 'number': rev['group_id'],
+             'msg': "%s" %image_res})
+    print(image_res)
+    time.sleep(2)
+    turl = user_api
+    response2 = client.chat.completions.create(
+        model=user_chat_model,  # 请填写您要调用的模型名称
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user",
+             "content": rev['raw_message']+"我向你发了张图片，因为你看不到，我就将内容总结给你了，现在请你就该图片内容，做出回应，内容限制在15字以内"+image_res},
+        ],
+        stream=True,
+    )
+    processed_d_data2 = ''
+    for chunk in response2:
+         processed_d_data2 += chunk.choices[0].delta.content
+    print("已读取图片信息:%s" % image_res)
+    print("已读取图片分析信息:%s" % processed_d_data2)
+    send_msg({'msg_type': 'group', 'number': rev['group_id'],
+              'msg': "%s" % processed_d_data2})
+    
 def draw_group(prompt,to):
     try:
         urldraw=draw_url
@@ -455,6 +534,47 @@ def main(rev):
                     pass
             
             if "[CQ:image,"  not in rev['raw_message']:
+                if "[CQ:image," in rev['raw_message']and random.randrange(0, 10) > 0:            #这里是保存图片的功能，设置存图概率
+                    get_image = rev['raw_message'][15:51].lower()
+                    if ".jpe" in get_image:
+                        get_image = get_image.replace(".jpe", ".jpeg")
+                    name = "%d.jpg" % img_num
+                    if ".gif" in get_image:
+                        name = "%d.gif" % img_num
+                    print(get_image)
+                    with open(imgtxt_path, "a", encoding="utf-8") as record:
+                        record.write("[" + name + "],")
+                    with open(imgtxt_path, "r", encoding="utf-8") as record:
+                        record_list = record.read()
+                    to_path = '.\图片识别库\%s' % name
+                    time.sleep(2)
+                    if record_list[-7] != img_num + 1:
+                        try:
+                            img = Image.open(BytesIO(open(
+                                r"C:\Users\86138\Documents\Tencent Files\3820178105\nt_qq\nt_data\Emoji\emoji-recv\2024-11\Ori\%s" % get_image,        #替换成你bot的qq号和路径地址，用于接收图片
+                                'rb').read()))
+                            img.save(to_path)
+                        except:
+                            try:
+                                img2 = Image.open(BytesIO(open(
+                                    r"C:\Users\86138\Documents\Tencent Files\3820178105\nt_qq\nt_data\Pic\2024-11\Ori\%s" % get_image,
+                                    'rb').read()))
+                                img2.save(to_path)
+                            except:
+                                try:
+                                    if ".jpg" in get_image:
+                                        get_image = get_image.replace(".jpg", "_720.jpg")
+                                    if ".png" in get_image:
+                                        get_image = get_image.replace(".png", "_720.png")
+                                    img3 = Image.open(BytesIO(open(
+                                        r"C:\Users\86138\Documents\Tencent Files\3820178105\nt_qq\nt_data\Pic\2024-11\Thumb\%s" % get_image,
+                                        'rb').read()))
+                                    img3.save(to_path)
+                                except:
+                                    print("图片识别库的图片保存失败")
+                    with open(to_path, 'rb') as img_file:
+                        img_base = base64.b64encode(img_file.read()).decode('utf-8')
+                    print("运行到这里说明保存成功")
                 objdict["banaijian%schat"%rev["sender"]["user_id"]]+=(rev["sender"]["nickname"]+"："+rev['raw_message'].replace('[CQ:at,qq=%d]'%rev['self_id'],'')+'\n\n')
                 objdict["banaijian%schat"%rev["sender"]["user_id"]]=objdict["banaijian%schat"%rev["sender"]["user_id"]][-50:]
 
@@ -880,6 +1000,9 @@ def main(rev):
                                     picture=temp_tts_list[-2].split('#picture/')[-1].replace("#",'')
                                     print(picture)
                                     draw_group(picture,rev['group_id'])
+                                 elif '#recognize/' in temp_tts_list[-2]:
+                                    temp_tts_list[-2] = temp_tts_list[-2].split('#recognize/')[-1].replace("#", '')
+                                    recognize_image(img_base)
                                 elif '#search/' in temp_tts_list[-2]:
                                     response.close()
                                     temp_tts_list=temp_tts_list[:-1]
@@ -968,6 +1091,9 @@ def main(rev):
                                 picture=temp_tts_list[-1].split('#picture/')[-1].replace("#",'')
                                 print(picture)
                                 draw_group(picture,rev['group_id'])
+                            elif '#recognize/' in temp_tts_list[-2]:
+                                temp_tts_list[-2] = temp_tts_list[-2].split('#recognize/')[-1].replace("#", '')
+                                recognize_image(img_base)
                             elif '#search/' in temp_tts_list[-1]:
 
                                 s_prompt=temp_tts_list[-1].split('#search/')[-1].replace("#",'')
@@ -1167,7 +1293,8 @@ order = f"""
 7. 当需要发送表情包表达情绪时，按照格式 #split##emotion/情绪##split#，例如有人反复纠缠不休导致很生气：#split##emotion/angry##split#  (不要总是发送表情包，每条信息最多使用一次表情包，只支持以下表情包[angry,happy,sad,fear,bored])
 8. 心情好或想要唱歌时，按照格式 #split##music/歌曲名##split#，例如有人想让你唱潮汐：#split##music/潮汐##split# (不要总是唱歌，男声或合唱可能声音可能出问题，可适当通过唱歌表达情绪)
 9. 需要切换自身心情时，按照格式 #split##mood/心情名##split#，例如有人惹你生气：#split##mood/angry##split#，心情平复后：#split##mood/default##split#（不要频繁切换情感，只支持以下心情[{moodstr}]）
-0. 回复时，禁止以群友的名义重复或冒充群友说话
+10. 回复时，禁止以群友的名义重复或冒充群友说话
+11.当你需要看到图片内容时按照格式 #cut##recognize/##cut##，例如：#cut##recognize/##cut#  （在你想获取图片内容时使用该识图功能）
 """
 
 system_prompt=system_prompts["default"]
