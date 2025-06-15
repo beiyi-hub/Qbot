@@ -1,26 +1,35 @@
 {
-  "socket_number": 6000,
-  "max_ac_word": 300,
-  "qq_name": "是柴郡猫猫AI",
-  "root_id": [ "1901182260" ],
-  "trigger": "柴郡",
-  "chat_url": "https://phapi.furina.chat/v1/chat/completions",
-  "chat_key": "",
-  "chat_model": "TIG-3.5-o1-20250101",
-  "draw_url": "https://api.siliconflow.cn/v1/images/generations",
-  "draw_key": "",
-  "draw_model": "stabilityai/stable-diffusion-3-5-large",
-  "system_prompt": "[Character setting]\n",
+    "socket_number": 3000,
+    "max_ac_word": 300,
+    "qq_name": "是柴郡猫猫AI",
+    "root_id": [
+        "1901182260"
+    ],
+    "ban_name": [
+        "AI"
+    ],
+    "trigger": "柴郡",
+    "chat_url": "https://phapi.furina.junmatec.cn/v1/chat/completions",
+    "chat_key": "",
+    "chat_model": "TIG-3.5-o1-20250101",
+    "draw_url": "https://api.siliconflow.cn/v1/images/generations",
+    "draw_key": "",
+    "draw_model": "stabilityai/stable-diffusion-3-5-large",
+    "system_prompt": "[Character setting]",
     "system_prompt2": "[Character setting]\n",
-  "active": "true",
-  "active_group": "992583002",
-  "active_private": "1901182260",
-  "active_goal": "true",
-  "set_time": "00",
-  "poke": "true",
-  "BV_number": [ "BV1obBEYJEkz" ],
-  "poke_message": [ "真讨厌", "戳我干什么" ],
-  "draw": "true",
-  "absolute_path": "C:\\Users\\86138\\Desktop\\TIG专属版qbot (2)\\TIG专属版qbot",
-  "ban_name": [ "AI" ]
+    "active": "true",
+    "active_group": "992583002",
+    "active_private": "1901182260",
+    "active_goal": "true",
+    "set_time": "00",
+    "poke": "true",
+    "BV_number": [
+        "BV1obBEYJEkz"
+    ],
+    "poke_message": [
+        "真讨厌",
+        "戳我干什么"
+    ],
+    "draw": "true",
+    "absolute_path": "r\"C:\\Users\\86138\\Desktop\\TIG专属版qbot (2)\\TIG专属版qbot\""
 }

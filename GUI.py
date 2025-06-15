@@ -6,7 +6,7 @@ import json
 class ConfigEditor:
     def __init__(self, master):
         self.master = master
-        self.master.title("幻宙娘AI配置编辑器")
+        self.master.title("bot配置编辑器")
         self.config_data = {}
         self.master.minsize(400, 600)  # 设置最小窗口尺寸
 
@@ -86,6 +86,11 @@ class ConfigEditor:
         ttk.Label(frame, text="管理员ID：").grid(row=4, column=0, sticky="e", padx=5)
         self.root_id = ttk.Entry(frame)
         self.root_id.grid(row=4, column=1, sticky="ew", padx=5)
+
+        # 屏蔽列表
+        ttk.Label(frame, text="屏蔽列表：").grid(row=5, column=0, sticky="e", padx=5)
+        self.ban_name = ttk.Entry(frame)
+        self.ban_name.grid(row=5, column=1, sticky="ew", padx=5)
 
     def create_api_settings(self):
         frame = ttk.LabelFrame(self.scrollable_frame, text="API设置")
@@ -199,6 +204,7 @@ class ConfigEditor:
             self.qq_name.insert(0, self.config_data["qq_name"])
             self.trigger.insert(0, self.config_data["trigger"])
             self.root_id.insert(0, ", ".join(self.config_data["root_id"]))
+            self.ban_name.insert(0, self.config_data["ban_name"])
 
             # API设置
             self.chat_url.insert(0, self.config_data["chat_url"])
@@ -236,6 +242,7 @@ class ConfigEditor:
                 "max_ac_word": int(self.max_ac_word.get()),
                 "qq_name": self.qq_name.get(),
                 "root_id": [x.strip() for x in self.root_id.get().split(",")],
+                "ban_name": [x.strip() for x in self.ban_name.get().split(",")],
                 "trigger": self.trigger.get(),
                 "chat_url": self.chat_url.get(),
                 "chat_key": self.chat_key.get(),
@@ -254,7 +261,7 @@ class ConfigEditor:
                 "BV_number": [x.strip() for x in self.BV_number.get().split(",")],
                 "poke_message": [x.strip() for x in self.poke_message.get().split(",")],
                 "draw": "true" if self.draw.get() else "false",
-                "absolute_path": f'r"{self.absolute_path.get()}"'
+                "absolute_path": f'r"{self.absolute_path.get()}"',
             }
 
             with open("set.json", "w", encoding="utf-8") as f:
