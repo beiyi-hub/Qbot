@@ -3,7 +3,7 @@
 > 专为TIG系列专业角色扮演模型量身定制的AI伴侣，提供拟人化交互体验
 
 ## ✨ 项目介绍
-本项目是基于**LLOneBot**实现的智能对话机器人，专为TIG系列专业角色扮演模型优化设计。通过整合联网搜索、B站视频解析、长短期记忆、语音合成、AI绘画等前沿功能，打造具有情感认知能力的拟人化AI交互体验。
+本项目是基于**LLOneBot**实现的QQ智能对话机器人，专为TIG系列专业角色扮演模型优化设计。通过整合联网搜索、B站视频解析、长短期记忆、语音合成、AI绘画等前沿功能，打造具有情感认知能力的拟人化AI交互体验。
 
 ## 🚀 核心功能
 | 功能模块 | 描述 |
@@ -29,7 +29,10 @@ pip install -r requirements.txt
 ```
 
 ### 2. 部署LLonebot插件
-> 使用一键打包的QQ插件包进行部署
+> 直接从[LLonebot](https://github.com/LLOneBot/LLOneBot/tree/main)原项目地址获取
+或使用我一键打包好的QQ插件包直接启动进行部署
+https://www.123684.com/s/jWiIjv-ZvMad
+
 
 ### 3. 配置系统
 ```bash
@@ -46,7 +49,7 @@ pip install -r requirements.txt
 | 功能 | 配置指南 |
 |------|----------|
 | **AI绘画** | 根据需要配置API或本地模型 |
-| **语音合成** | [GPT-SoVITS安装教程](https://github.com/RVC-Boss/GPT-SoVITS) |
+| **语音合成** | [GPT-SoVITS安装教程](https://github.com/RVC-Boss/GPT-SoVITS) （本程序与GPT-SoVITS共享一个后端合成程序）|
 | **高级设置** | 详见配置文件 `set.json` |
 
 ## ❓ 常见问题
